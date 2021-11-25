@@ -3,28 +3,31 @@ function criaCss(objeto) {
     style.innerHTML = `
     .containerReset{
         display: flex;
-        position: absolute;
+        position: fixed;
         flex-direction: column;
         align-items: center;
-        width:${objeto["largura"]};
-        height:${objeto["altura"]};
+        width:${objeto["largura"]}px;
+        height:${objeto["altura"]}px;
         background-color: rgba(255, 255, 255, 0.74);
         border-radius: 15px;
         border: 1px solid black;
         box-shadow: rgb(0, 0, 0) 0px 20px 30px -10px; 
-        margin-bottom: 300px;
+        top: calc(50% - (${objeto["altura"]}px / 2));
+        left: calc(50% - (${objeto["largura"]}px / 2));
+        z-index: 2;
     }
     .containerReset p{
         text-align: center;
         padding-top: 20px;
     }
-    .containerAlert{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-    }
+    // .containerAlert{
+    //     display: flex;
+    //     justify-content: center;
+    //     align-items: center;
+    //     width: 100%;
+    //     height: 100%;
+    //     background-color: blue;
+    // }
     .botao {
         display: inline-block;
         font-weight: 400;
@@ -69,24 +72,25 @@ function criaHtml(objeto) {
     </div>`;
     document.body.appendChild(divContainer);
 }
-export function start(objeto = new Object) {
+export function alerta(objeto = new Object) {
     objeto.titulo = typeof objeto.titulo !== "undefined" ? objeto.titulo : "Alerta";
     objeto.mensagem = typeof objeto.mensagem !== "undefined" ? objeto.mensagem : "Erro";
     objeto.valueBtn = typeof objeto.valueBtn !== "undefined" ? objeto.valueBtn : "Ok";
-    objeto.largura = typeof objeto.largura !== "undefined" ? objeto.largura : "300px";
-    objeto.altura = typeof objeto.altura !== "undefined" ? objeto.altura : "150px";
+    objeto.largura = typeof objeto.largura !== "undefined" ? objeto.largura : 300;
+    objeto.altura = typeof objeto.altura !== "undefined" ? objeto.altura : 150;
     objeto.funcao = typeof objeto.funcao === "function" ? objeto.funcao : () => { };
     criaHtml(objeto);
     criaCss(objeto);
-    alerta(objeto);
+    exibeAlerta(objeto);
 }
-const alerta = function (objeto) {
+const exibeAlerta = function (objeto) {
     const container = document.querySelector(".containerReset");
     if (container.classList.contains("hidden")) {
         container.classList.remove("hidden");
     }
     container.children[0].innerHTML = objeto["mensagem"];
     const btnReset = document.getElementById("btnReset");
+    btnReset.value = objeto.valueBtn;
     btnReset.onclick = () => {
         objeto.funcao();
         if (!container.classList.contains("hidden")) {
